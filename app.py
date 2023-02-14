@@ -13,9 +13,9 @@ output_path = os.getcwd()
 os.chdir(output_path)
 
 # Color themes
-eyThemeYellow = '#ffe600'
-eyThemeGrey = '#333333'
-eyThemeGrey2 = '#cccccc'
+ThemeYellow = '#ffe600'
+ThemeGrey = '#333333'
+ThemeGrey2 = '#cccccc'
 
 # Read user inputs
 file = open(output_path + '/components/UserInputs.txt', 'r')
@@ -385,7 +385,7 @@ def main_script():
 
             style = docMemo.styles['Normal']
             font = style.font
-            font.name = 'EYInterstate Light'
+            font.name = 'Calibri'
             font.size = Pt(10)
             font.color.rgb = RGBColor(0, 0, 0)
 
@@ -467,7 +467,7 @@ def main_script():
 
                 style = doc.styles['Normal']
                 font = style.font
-                font.name = 'EYInterstate Light'
+                font.name = 'Calibri'
                 font.size = Pt(10)
 
                 #convert date to string to be used in filename
@@ -1565,7 +1565,7 @@ def main_script():
                         
 
                         #recommendation section
-                        if 'maples' in doc_fr['TPAName'][row_num]:
+                        if 'alpha' in doc_fr['TPAName'][row_num]:
                             reco15a = 'This is due to data limitation. The said missing mappings are those investments that are present in the “Purchases and Sales” file and missing in “Cost Roll Forward” file. They use “InvestID” and “Investment” as the common column, respectively, for the former to obtain the “Group2” column from the latter which is used as the common field for acquiring the instrument mapping.'
                         else:
                             reco15a = 'This is due to data limitation. The value in the Investment Type column equivalent in the raw file is blank as such instrument was not mapped.'
@@ -1629,7 +1629,7 @@ def main_script():
                     try:
                         PortVal_Pricing = pd.read_excel(output_path+'/'+wp_path+'/'+WAMapps_PortVal[0], sheet_name='Pricing_Summary', header=22)
                         UnpricedItems = PortVal_Pricing[PortVal_Pricing['Unnamed: 1']=='Number of unpriced items']['Unnamed: 2'].iloc[0]
-                        pricedItems = PortVal_Pricing[PortVal_Pricing['Unnamed: 1']=='Number of EY priced items']['Unnamed: 2'].iloc[0]
+                        pricedItems = PortVal_Pricing[PortVal_Pricing['Unnamed: 1']=='Number of beta priced items']['Unnamed: 2'].iloc[0]
                         pricedDifference = abs(PortVal_Pricing[PortVal_Pricing['Unnamed: 1']=='Difference (%)']['Unnamed: 2'].iloc[0])
                     except:
                         PortVal_PricingNotFound = True
@@ -1646,44 +1646,44 @@ def main_script():
                     time.sleep(1)
                     PricingNotZero = pyautogui.screenshot('PricingNotZero.png',region=(150,440, 500, 500)) #Edited region=(100,445, 700, 500))
                     PricingNotZero = add_border(PricingNotZero,'PricingNotZero.png')
-                    #move to EY ISP worksheet
+                    #move to beta alpha worksheet
                     try:
-                        workbook.Sheets('EY-ISP Price Support').Select()
-                        workbook.Sheets('EY-ISP Price Support').Cells(1,1).Select()
+                        workbook.Sheets('alpha Price Support').Select()
+                        workbook.Sheets('alpha Price Support').Cells(1,1).Select()
                         time.sleep(1)
                     except:
                         pass
-                    EYISPss = pyautogui.screenshot('EYISP.png',region=(50,310, 1550, 350))
-                    EYISPss = add_border(EYISPss,'EYISP.png')
+                    alphass = pyautogui.screenshot('alpha.png',region=(50,310, 1550, 350))
+                    alphass = add_border(alphass,'alpha.png')
 
                     #Pricing Issue Memo Logic
                     if abs(UnpricedItems)>0 or abs(pricedDifference)>=.10:
-                        port_memo_wdiff = 'The audit team shall investigate the ticker columns of the portfolio input file as they might be invalid in format. The case may also be that these are private instruments as such the audit team shall manually price them. \n \nThe reason for the difference is might be due to the following:\n•The instruments may need to be scaled, as such audit team may opt to tag as YES the Scale by 100 column of the Portfolio tab in the Portfolio working paper\n•Incorrect or missing FX rates\n•The EY Prices do not agree with the Client price'
+                        port_memo_wdiff = 'The audit team shall investigate the ticker columns of the portfolio input file as they might be invalid in format. The case may also be that these are private instruments as such the audit team shall manually price them. \n \nThe reason for the difference is might be due to the following:\n•The instruments may need to be scaled, as such audit team may opt to tag as YES the Scale by 100 column of the Portfolio tab in the Portfolio working paper\n•Incorrect or missing FX rates\n•The beta Prices do not agree with the Client price'
                         port_memo_wodiff = 'The audit team shall investigate the ticker columns of the portfolio input file as they might be invalid in format. The case may also be that these are private instruments as such the audit team shall manually price them.'
                         #Valuation is N
                         if doc_fr['External Valuations'][row_num]=='N':
-                            sec3 = 'No external pricing was pulled from the ISP portal for the portfolio valuations workpaper due to "External Valuations" in the WAMapps request tagged as "N".'
+                            sec3 = 'No external pricing was pulled from the alpha portal for the portfolio valuations workpaper due to "External Valuations" in the WAMapps request tagged as "N".'
                             port_ss = [('PricingNotZero.png',Inches(2.5))]
                             port_memo = 'Audit team should confirm if they do not really need the pricing. Should they need the valuation, they will need to request a rerun of the Portfolio Valuations to the WAMapps delivery team.'
                         #No Priced Items
                         elif abs(pricedItems)==0:
-                            sec3 = 'No external pricing was pulled from the ISP portal for the portfolio valuations workpaper'
-                            port_ss = [('PricingNotZero.png',Inches(2.5)),('EYISP.png',Inches(4.5))]
+                            sec3 = 'No external pricing was pulled from the alpha portal for the portfolio valuations workpaper'
+                            port_ss = [('PricingNotZero.png',Inches(2.5)),('alpha.png',Inches(4.5))]
                             port_memo = port_memo_wodiff
                         #Some Priced Items
                         elif abs(UnpricedItems)>0 and abs(pricedDifference)>.10:
-                            sec3 = 'Some instruments were not externally priced in the ISP portal and there was a difference noted between the fair value of price items per client and per EY in the portfolio valuations workpaper.'
+                            sec3 = 'Some instruments were not externally priced in the alpha portal and there was a difference noted between the fair value of price items per client and per beta in the portfolio valuations workpaper.'
                             port_ss = [('PricingNotZero.png',Inches(2.5))]
                             port_memo = port_memo_wdiff
                         elif abs(UnpricedItems)>0:
-                            sec3 = 'Some instruments were not externally priced in the ISP portal for the portfolio valuations workpaper.'
+                            sec3 = 'Some instruments were not externally priced in the alpha portal for the portfolio valuations workpaper.'
                             port_ss = [('PricingNotZero.png',Inches(2.5))]
                             port_memo = port_memo_wodiff
                         #All Items Priced but with difference
                         elif abs(UnpricedItems)==0 and abs(pricedDifference)>.10:
-                            sec3 = 'All instruments were externally priced in the ISP portal for the portfolio valuations workpaper however there was a difference noted between the fair value of price items per client and per EY.'
+                            sec3 = 'All instruments were externally priced in the alpha portal for the portfolio valuations workpaper however there was a difference noted between the fair value of price items per client and per beta.'
                             port_ss = [('PricingNotZero.png',Inches(2.5))]
-                            port_memo = 'The reason for the difference is might be due to the following:\n•The instruments may need to be scaled, as such audit team may opt to tag as YES the Scale by 100 column of the Portfolio tab in the Portfolio working paper\n•Incorrect or missing FX rates\n•The EY Prices do not agree with the Client price'
+                            port_memo = 'The reason for the difference is might be due to the following:\n•The instruments may need to be scaled, as such audit team may opt to tag as YES the Scale by 100 column of the Portfolio tab in the Portfolio working paper\n•Incorrect or missing FX rates\n•The beta Prices do not agree with the Client price'
 
                         memo_final(memo_text = sec3,screenshot = port_ss,reco_text=port_memo)    
                     else:
@@ -2051,8 +2051,8 @@ def main_script():
                         if (Leads_TB['Previous_Year']==0).all():
                             missing_files.append('PY Trial Balance')
                             missing_tab.append('PY Trial Balance')
-                        #citco FRAN missing
-                        if 'Account_Rec' not in Leads_Sheets.sheet_names and TPA =='citco':
+                        #beta missing
+                        if 'Account_Rec' not in Leads_Sheets.sheet_names and TPA =='beta':
                             missing_files.append('CY FRAN')
                             missing_wp.append('Adjustments, Account_Rec, Balance_Sheet_FS, and Profit_Loss_FS tabs of the Leads')
                     else:
